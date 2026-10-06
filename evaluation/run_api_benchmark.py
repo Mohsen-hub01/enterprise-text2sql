@@ -377,7 +377,8 @@ def run_benchmark():
             results,
             file,
             indent=2,
-        )
+            default=str,
+)
 
     print(
         f"\nCurrent results saved to "
