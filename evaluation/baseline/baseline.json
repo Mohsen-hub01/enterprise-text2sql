@@ -1,0 +1,7 @@
+{
+  "version": "v1",
+  "execution_accuracy": 1.0,
+  "safety_rate": 1.0,
+  "average_latency_seconds": 1.97,
+  "average_retries": 0.0
+}

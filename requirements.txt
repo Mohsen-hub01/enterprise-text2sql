@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+python-dotenv
+pydantic
+sqlglot
+openrouter
+openai
+langgraph
+requests
+requests
+
+
+
+
+

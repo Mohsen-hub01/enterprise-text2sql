@@ -1,0 +1,124 @@
+name: LLM Evaluation & Regression Detection
+
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+
+  evaluate:
+
+    name: Evaluate Text-to-SQL Agent
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ------------------------------------------------
+      # 1. Download repository
+      # ------------------------------------------------
+
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+
+      # ------------------------------------------------
+      # 2. Create environment variables
+      # ------------------------------------------------
+
+      - name: Create environment file
+        run: |
+          echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}" >> .env
+          echo "DATABASE_URL=postgresql://text2sql_reader:reader_password@postgres:5432/analytics" >> .env
+
+
+      # ------------------------------------------------
+      # 3. Build and start Docker
+      # ------------------------------------------------
+
+      - name: Build Docker containers
+        run: |
+          docker compose up -d --build
+
+
+      # ------------------------------------------------
+      # 4. Show running containers
+      # ------------------------------------------------
+
+      - name: Check containers
+        run: |
+          docker compose ps
+
+
+      # ------------------------------------------------
+      # 5. Wait for FastAPI
+      # ------------------------------------------------
+
+      - name: Wait for API
+        run: |
+          echo "Waiting for API..."
+
+          for i in {1..30}
+          do
+            if curl --fail http://localhost:8000/health
+            then
+              echo "API is ready"
+              exit 0
+            fi
+
+            echo "API not ready yet..."
+            sleep 2
+          done
+
+          echo "API failed to start"
+
+          docker compose logs
+
+          exit 1
+
+
+      # ------------------------------------------------
+      # 6. Run evaluation benchmark
+      # ------------------------------------------------
+
+      - name: Run LLM benchmark
+        run: |
+          docker compose exec -T api \
+          python -m evaluation.run_api_benchmark
+
+
+      # ------------------------------------------------
+      # 7. Detect regressions
+      # ------------------------------------------------
+
+      - name: Detect model regressions
+        run: |
+          docker compose exec -T api \
+          python -m evaluation.regression
+
+
+      # ------------------------------------------------
+      # 8. Show logs if something failed
+      # ------------------------------------------------
+
+      - name: Show Docker logs on failure
+        if: failure()
+        run: |
+          docker compose logs
+
+
+      # ------------------------------------------------
+      # 9. Stop containers
+      # ------------------------------------------------
+
+      - name: Stop Docker containers
+        if: always()
+        run: |
+          docker compose down -v

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "q001",
+    "question": "How many customers are there?",
+    "reference_sql": "SELECT COUNT(*) AS customer_count FROM customers;",
+    "category": "aggregation"
+  },
+  {
+    "id": "q002",
+    "question": "Which customers are from France?",
+    "reference_sql": "SELECT first_name, last_name FROM customers WHERE country = 'France';",
+    "category": "filter"
+  },
+  {
+    "id": "q003",
+    "question": "How many completed orders are there?",
+    "reference_sql": "SELECT COUNT(*) AS completed_orders FROM orders WHERE status = 'completed';",
+    "category": "filter_aggregation"
+  },
+  {
+    "id": "q004",
+    "question": "Which customer generated the most revenue from completed orders?",
+    "reference_sql": "SELECT c.first_name, c.last_name, SUM(o.total_amount) AS revenue FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.status = 'completed' GROUP BY c.customer_id, c.first_name, c.last_name ORDER BY revenue DESC LIMIT 1;",
+    "category": "join_aggregation"
+  },
+  {
+    "id": "q005",
+    "question": "What is the total revenue from completed orders?",
+    "reference_sql": "SELECT SUM(total_amount) AS total_revenue FROM orders WHERE status = 'completed';",
+    "category": "aggregation"
+  },
+  {
+    "id": "q006",
+    "question": "Which products belong to the Electronics category?",
+    "reference_sql": "SELECT name FROM products WHERE category = 'Electronics';",
+    "category": "filter"
+  },
+  {
+    "id": "q007",
+    "question": "What is the average product price?",
+    "reference_sql": "SELECT AVG(price) AS average_price FROM products;",
+    "category": "aggregation"
+  },
+  {
+    "id": "q008",
+    "question": "How much revenue was generated each month?",
+    "reference_sql": "SELECT DATE_TRUNC('month', order_date) AS month, SUM(total_amount) AS revenue FROM orders WHERE status = 'completed' GROUP BY DATE_TRUNC('month', order_date) ORDER BY month;",
+    "category": "date_aggregation"
+  }
+]
