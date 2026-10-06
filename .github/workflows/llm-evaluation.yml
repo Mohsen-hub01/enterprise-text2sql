@@ -1,6 +1,5 @@
 name: LLM Evaluation & Regression Detection
 
-
 on:
   push:
     branches:
@@ -10,9 +9,7 @@ on:
     branches:
       - main
 
-
 jobs:
-
   evaluate:
 
     name: Evaluate Text-to-SQL Agent
@@ -35,8 +32,8 @@ jobs:
 
       - name: Create environment file
         run: |
-          echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}" >> .env
-          echo "DATABASE_URL=postgresql://text2sql_reader:reader_password@postgres:5432/analytics" >> .env
+          echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}" >> app/.env
+          echo "DATABASE_URL=postgresql+psycopg2://text2sql_reader:reader_password@postgres:5432/analytics" >> app/.env
 
 
       # ------------------------------------------------
@@ -78,9 +75,7 @@ jobs:
           done
 
           echo "API failed to start"
-
           docker compose logs
-
           exit 1
 
 
