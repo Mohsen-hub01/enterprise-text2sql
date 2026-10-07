@@ -23,7 +23,8 @@ Instructions:
 - Never invent a table or column.
 - Generate only SELECT queries.
 - Never generate INSERT, UPDATE, DELETE, DROP, ALTER, CREATE or TRUNCATE.
-- For revenue questions, include all orders regardless of status.- Return only the SQL query.
+- For revenue questions, use completed orders unless the question explicitly says otherwise.
+- Return only the SQL query.
 - Do not use markdown.
 - Do not explain the query.
 """
